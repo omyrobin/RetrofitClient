@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.http.retrofitclient.MainActivity">
+
+    <Button
+        android:id="@+id/get_request_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GET Request" />
+
+    <Button
+        android:id="@+id/post_request_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POST Request" />
+
+    <Button
+        android:id="@+id/get_request_list_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GET Request For List" />
+
+    <Button
+        android:id="@+id/post_request_list_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POST Request For List" />
+</LinearLayout>
