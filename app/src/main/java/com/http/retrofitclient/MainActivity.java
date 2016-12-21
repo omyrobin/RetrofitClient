@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getListObject() {
-        RetrofitClient.client().get( String.format(Url.SEARCH, "1", "q=幽",""), new ResponseJsonCallBack<StoryInfoEntity>() {
+        RetrofitClient.client().get( String.format(Url.SEARCH, "1", "q=的",""), new ResponseJsonCallBack<StoryInfoEntity>() {
 
             @Override
             public void onSuccess(Headers headers, List<StoryInfoEntity> storyInfoEntities) {
