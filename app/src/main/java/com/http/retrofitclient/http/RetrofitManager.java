@@ -101,7 +101,7 @@ public class RetrofitManager {
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request()
                                 .newBuilder()
-                                .addHeader("C", getHeaderC())
+                                .addHeader(Constant.HEADER_C, getHeaderC())
                                 .addHeader(Constant.HEADER_X_I, X_I)
                                 .addHeader(Constant.HEADER_X_S, X_S)
                                 .addHeader(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8")

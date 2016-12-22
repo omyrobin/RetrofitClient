@@ -2,12 +2,14 @@ package com.http.retrofitclient.http;
 
 import android.util.Log;
 
-
 import com.http.retrofitclient.model.ApiService;
 import com.http.retrofitclient.model.GetService;
+import com.http.retrofitclient.model.UpLoadService;
 
 import org.json.JSONObject;
 
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,7 +45,7 @@ public class RetrofitClient {
         this.get(url, callBack, null);
     }
 
-    public <T> void post(final String url, JSONObject values, final ResponseCallBack<T> callBack, final String name){
+    public <T> void post(String url, JSONObject values, final ResponseCallBack<T> callBack, final String name){
         ApiService apiService = RetrofitManager.getRetrofitClient().create(ApiService.class);
         Call<String> call = apiService.post(url, values.toString());
         call.enqueue( new Callback<String>() {
@@ -61,7 +63,7 @@ public class RetrofitClient {
         });
     }
 
-    public <T> void get(final String url, final ResponseCallBack<T> callBack, final String name){
+    public <T> void get(String url, final ResponseCallBack<T> callBack, final String name){
         GetService apiService = RetrofitManager.getRetrofitClient().create(GetService.class);
         Call<String> call = apiService.get(url);
         call.enqueue(new Callback<String>() {
@@ -73,6 +75,22 @@ public class RetrofitClient {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 callBack.onFailure("请求超时");
+            }
+        });
+    }
+
+    public void upLoad(String url, String filename, MultipartBody.Part body, final ResponseCallBack callBack){
+        UpLoadService upLoadService = RetrofitManager.getRetrofitClient().create(UpLoadService.class);
+        Call<String> call = upLoadService.upload(url,filename,body);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                callBack.onSuccess(response.headers(), response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
             }
         });
     }
