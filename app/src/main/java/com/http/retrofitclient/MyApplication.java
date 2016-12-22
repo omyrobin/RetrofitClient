@@ -2,6 +2,8 @@ package com.http.retrofitclient;
 
 import android.app.Application;
 
+import com.http.retrofitclient.utils.FileUtil;
+
 /**
  * Created by omyrobin on 2016/11/17.
  */
@@ -16,6 +18,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        FileUtil.instance(this);
     }
 
     public static MyApplication getInstance(){
