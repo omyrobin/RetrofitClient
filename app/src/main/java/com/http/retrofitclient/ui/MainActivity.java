@@ -1,4 +1,4 @@
-package com.http.retrofitclient;
+package com.http.retrofitclient.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.http.retrofitclient.R;
 import com.http.retrofitclient.constant.Constant;
 import com.http.retrofitclient.constant.Url;
 import com.http.retrofitclient.entity.StoryInfoEntity;
@@ -30,7 +31,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Button getRequestTv, postRequestTv, getRequestListTv, postRequestListTv,uploadRequestTv;
 

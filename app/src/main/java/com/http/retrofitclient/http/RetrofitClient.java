@@ -1,18 +1,18 @@
 package com.http.retrofitclient.http;
 
-import android.util.Log;
-
-import com.http.retrofitclient.model.ApiService;
+import com.http.retrofitclient.model.PostService;
 import com.http.retrofitclient.model.GetService;
 import com.http.retrofitclient.model.UpLoadService;
 
 import org.json.JSONObject;
 
 import okhttp3.MultipartBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by omyrobin on 2016/12/12.
@@ -46,53 +46,57 @@ public class RetrofitClient {
     }
 
     public <T> void post(String url, JSONObject values, final ResponseCallBack<T> callBack, final String name){
-        ApiService apiService = RetrofitManager.getRetrofitClient().create(ApiService.class);
-        Call<String> call = apiService.post(url, values.toString());
-        call.enqueue( new Callback<String>() {
+        PostService postService = RetrofitManager.getRetrofitClient().create(PostService.class);
+        Observable<Response<String>> call = postService.post(url, values.toString());
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<Response<String>>() {
+                    @Override
+                    public void onError(Throwable e) {
 
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("数据",response.body());
-                sendSuccessMessage(response, callBack, name);
-            }
+                    }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                callBack.onFailure("请求超时");
-            }
-        });
+                    @Override
+                    public void onNext(Response<String> response) {
+                        sendSuccessMessage(response, callBack, name);
+                    }
+                });
     }
 
     public <T> void get(String url, final ResponseCallBack<T> callBack, final String name){
         GetService apiService = RetrofitManager.getRetrofitClient().create(GetService.class);
-        Call<String> call = apiService.get(url);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                sendSuccessMessage(response, callBack, name);
-            }
+        Observable<Response<String>> call = apiService.get(url);
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<Response<String>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        callBack.onFailure("请求超时");
+                    }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                callBack.onFailure("请求超时");
-            }
-        });
+                    @Override
+                    public void onNext(Response<String> response) {
+                        sendSuccessMessage(response, callBack, name);
+                    }
+                });
     }
 
     public void upLoad(String url, String filename, MultipartBody.Part body, final ResponseCallBack callBack){
         UpLoadService upLoadService = RetrofitManager.getRetrofitClient().create(UpLoadService.class);
-        Call<String> call = upLoadService.upload(url,filename,body);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                callBack.onSuccess(response.headers(), response.body());
-            }
+        Observable<Response<String>> call = upLoadService.upload(url,filename,body);
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<Response<String>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        callBack.onFailure("请求超时");
+                    }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
+                    @Override
+                    public void onNext(Response<String> response) {
+                        callBack.onSuccess(response.headers(), response.body());
+                    }
+                });
     }
 
     private <T> void sendSuccessMessage(Response<String> response, ResponseCallBack<T> callBack, String name){
