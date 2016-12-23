@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onSuccess(Headers headers, List<StoryInfoEntity> storyInfoEntities) {
-                Toast.makeText(MainActivity.this,storyInfoEntities.get(3).name,Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,storyInfoEntities.get(2).name,Toast.LENGTH_LONG).show();
             }
 
             @Override
