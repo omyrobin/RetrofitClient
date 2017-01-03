@@ -6,7 +6,7 @@ public class Url {
 	
 	public static final String THE_TESTING_SERVER = "http://testapi.m.hotread.com/story-app/";
 	
-	public static String NOVEL_SERVER_ADDRESS = THE_TESTING_SERVER;
+	public static String NOVEL_SERVER_ADDRESS = "http://10.10.10.43:8080/story-app/";
 
 	public static final String LOGIN  = "m/clientaction/story/login";//登陆
 
@@ -18,7 +18,7 @@ public class Url {
 
 	public static final String UPLOAD_IMAGE = "http://p.duyao001.com/%supload_image_s.do";//图片上传
 
-	public static final String getUploadImageUrl(String menuName){
+	public static String getUploadImageUrl(String menuName){
 		if(menuName == null || menuName.replaceAll(" ", "").equals("")){
 			return String.format(UPLOAD_IMAGE, "");
 		}
