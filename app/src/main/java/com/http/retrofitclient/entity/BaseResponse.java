@@ -4,19 +4,19 @@ package com.http.retrofitclient.entity;
  * Created by omyrobin on 2017/1/3.
  */
 
-public class ResultEntity<T>{
+public class BaseResponse<T>{
 
-    private String errorCode;
+    private int errorCode;
 
     private String message;
 
     private T data;
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
 

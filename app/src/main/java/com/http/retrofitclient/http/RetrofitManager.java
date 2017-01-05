@@ -10,6 +10,8 @@ import com.http.retrofitclient.constant.Constant;
 import com.http.retrofitclient.constant.Url;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
@@ -17,6 +19,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.framed.Header;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -37,11 +40,13 @@ public class RetrofitManager {
     public static final int DEFAULT_TIMEOUT = 15;
     public volatile static Retrofit retrofit;
     public volatile static OkHttpClient client;
+    private static Map<String, String> headersMap;
 
     public static Retrofit getRetrofitClient(){
         if (retrofit == null) {
             synchronized (RetrofitManager.class) {
                 initRetorfit(initClient());
+                headersMap = new HashMap<>();
             }
         }
         return retrofit;
@@ -86,34 +91,6 @@ public class RetrofitManager {
         return client;
     }
 
-    public static void addHeaders(Headers headers) {
-        final String X_I = headers.get(Constant.HEADER_X_I);
-        final String X_S = headers.get(Constant.HEADER_X_S);
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        client = new OkHttpClient.Builder()
-                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                .addInterceptor(logging)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request()
-                                .newBuilder()
-                                .addHeader(Constant.HEADER_C, getHeaderC())
-                                .addHeader(Constant.HEADER_X_I, X_I)
-                                .addHeader(Constant.HEADER_X_S, X_S)
-                                .addHeader(HEADER_CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8")
-                                .addHeader("Connection", "Keep-Alive")
-                                .build();
-                        return chain.proceed(request);
-                    }
-                })
-                .build();
-        initRetorfit(client);
-    }
-
     public static String getHeaderC() {
         TelephonyManager tm = (TelephonyManager) MyApplication.getInstance().getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         String clientHeader = "android/model:" + Build.MODEL + ",SDK:Android"
@@ -123,5 +100,15 @@ public class RetrofitManager {
                 + "oppo"+ "/"
                 + tm.getDeviceId();
         return clientHeader;
+    }
+
+    public static void setHeaders(Headers headers){
+        for (int i = 0; i < headers.size(); i++) {
+            headersMap.put(headers.name(i), headers.value(i));
+        }
+    }
+
+    public static Map<String, String> getHeaders(){
+        return headersMap;
     }
 }

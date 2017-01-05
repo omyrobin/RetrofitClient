@@ -1,10 +1,15 @@
 package com.http.retrofitclient.model;
 
 
-import retrofit2.Call;
+import com.http.retrofitclient.entity.BaseResponse;
+import com.http.retrofitclient.entity.UserEntity;
+
+import java.util.Map;
+
 import retrofit2.Response;
-import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.Url;
 import rx.Observable;
@@ -15,5 +20,5 @@ import rx.Observable;
 public interface PostService {
     @FormUrlEncoded
     @POST
-    Observable<Response<String>> post(@Url String url, @Field("req") String value);
+    Observable<Response<BaseResponse<UserEntity>>> register(@Url String url, @HeaderMap Map<String, String> maps, @FieldMap Map<String,String> value);
 }

@@ -4,32 +4,31 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.http.retrofitclient.R;
 import com.http.retrofitclient.constant.Constant;
 import com.http.retrofitclient.constant.Url;
-import com.http.retrofitclient.entity.StoryInfoEntity;
 import com.http.retrofitclient.entity.UserEntity;
-import com.http.retrofitclient.http.ResponseJsonCallBack;
+import com.http.retrofitclient.http.ProgressSubscriber;
 import com.http.retrofitclient.http.RetrofitClient;
 import com.http.retrofitclient.http.RetrofitManager;
-import com.http.retrofitclient.http.RetrofitParams;
+import com.http.retrofitclient.model.GetService;
+import com.http.retrofitclient.model.PostService;
 import com.http.retrofitclient.utils.BitmapUtil;
 import com.http.retrofitclient.utils.KitKatUri;
 
 import java.io.File;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import rx.Observable;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -60,77 +59,52 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         postRequestListTv.setOnClickListener(this);
         uploadRequestTv.setOnClickListener(this);
     }
+    
+    private void login(){
+        Map<String, String> params = new HashMap<>();
+        params.put("os","android");
 
-    private void getObject() {
-        RetrofitClient.client().get(String.format(Url.READING, "577014914611343360"), new ResponseJsonCallBack<String>() {
-
+        Observable ob = RetrofitManager.getRetrofitClient().create(PostService.class).register(Url.REGISTER, new HashMap<String, String>(), params);
+        RetrofitClient.client().post(ob, new ProgressSubscriber<UserEntity>(MainActivity.this) {
             @Override
-            public void onSuccess(Headers headers, String str) {
-                Toast.makeText(MainActivity.this,str,Toast.LENGTH_LONG).show();
+            protected void onSuccess(UserEntity userEntity) {
+                Log.i("res", userEntity.getNickName());
             }
 
             @Override
-            public void onFailure(String errorMsg) {
+            protected void onFailure(String message) {
+                Log.i("res", message);
+            }
+        },true);
+    }
+
+    private void getObject() {
+        Map<String, String> params = new HashMap<>();
+        params.put("id","501215412");
+
+        Observable ob = RetrofitManager.getRetrofitClient().create(GetService.class).getUserInfo("http://10.10.10.43:8080/story-app/m1/user/501215412", RetrofitManager.getHeaders());
+        RetrofitClient.client().get(ob, new ProgressSubscriber<UserEntity>(MainActivity.this) {
+            @Override
+            protected void onSuccess(UserEntity userEntity) {
+                Log.i("res", userEntity.getNickName());
+            }
+
+            @Override
+            protected void onFailure(String message) {
 
             }
         });
     }
 
     private void getListObject() {
-        RetrofitClient.client().get( String.format(Url.SEARCH, "1", "q=幽",""), new ResponseJsonCallBack<StoryInfoEntity>() {
-
-            @Override
-            public void onSuccess(Headers headers, List<StoryInfoEntity> storyInfoEntities) {
-                Toast.makeText(MainActivity.this,storyInfoEntities.get(3).name,Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(String errorMsg) {
-
-            }
-        }, "story");
 
     }
 
     private void postListObject() {
-        //封装请求参数
-        RetrofitParams params = new RetrofitParams();
-        params.put("id", "500000286");
-        RetrofitClient.client().post(Url.MYSHELF, params.create(), new ResponseJsonCallBack<StoryInfoEntity>() {
-
-            @Override
-            public void onFailure(String errorMsg) {
-
-            }
-
-            @Override
-            public void onSuccess(Headers headers, List<StoryInfoEntity> storyInfoEntities) {
-                Toast.makeText(MainActivity.this,storyInfoEntities.get(5).name,Toast.LENGTH_SHORT).show();
-            }
-
-        }, "storyShelf");
 
     }
 
     private void postObject() {
-        //封装请求参数
-        RetrofitParams params = new RetrofitParams();
-        params.put("id", "500000286");
-        params.put("type", "2");
-
-        RetrofitClient.client().post(Url.LOGIN, params.create(), new ResponseJsonCallBack<UserEntity>() {
-            @Override
-            public void onSuccess(Headers headers, UserEntity userEntity) {
-                RetrofitManager.addHeaders(headers);
-                Toast.makeText(MainActivity.this,userEntity.nickName,Toast.LENGTH_SHORT).show();
-                Log.i("UserEntity", userEntity.nickName);
-            }
-
-            @Override
-            public void onFailure(String errorMsg) {
-                Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }, "userEntity");
 
     }
 
@@ -185,17 +159,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //KEY = files
         MultipartBody.Part body = MultipartBody.Part.createFormData("files", file.getName(), requestFile);
 
-        RetrofitClient.client().upLoad(Url.getUploadImageUrl("user"),  filePath.split("photo/")[1], body, new ResponseJsonCallBack<String>() {
-            @Override
-            public void onFailure(String errorMsg) {
-
-            }
-
-            @Override
-            public void onSuccess(Headers headers, String url) {
-                Toast.makeText(MainActivity.this, url,Toast.LENGTH_SHORT).show();
-            }
-        });
+//        RetrofitClient.client().upLoad(Url.getUploadImageUrl("user"),  filePath.split("photo/")[1], body, new ResponseJsonCallBack<String>() {
+//            @Override
+//            public void onFailure(String errorMsg) {
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(Headers headers, String url) {
+//                Toast.makeText(MainActivity.this, url,Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override
@@ -206,7 +180,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.post_request_tv:
-                postObject();
+                login();
                 break;
 
             case R.id.get_request_list_tv:

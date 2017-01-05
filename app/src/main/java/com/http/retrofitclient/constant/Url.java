@@ -8,12 +8,16 @@ public class Url {
 	
 	public static String NOVEL_SERVER_ADDRESS = "http://10.10.10.43:8080/story-app/";
 
-	public static final String LOGIN  = "m/clientaction/story/login";//登陆
+	public static final String LOGIN  = "m1/user/autoLogin";//登陆
+
+	public static final String REGISTER = "m1/user/register/guest";//注册;
+
+	public static final String USERINFO = "m1/user/";
 
 	public static final String MYSHELF  = "m/clientview/view_myshelf";//我的书架
 	
 	public static final String SEARCH = "api/v2/story/common/search/10/%s?%s&%sdesc=1";//搜索
-	
+
 	public static final String READING ="m/clientview/view_chapter_content?id=%s";//根据章节ID阅读
 
 	public static final String UPLOAD_IMAGE = "http://p.duyao001.com/%supload_image_s.do";//图片上传
